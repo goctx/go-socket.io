@@ -9,12 +9,15 @@ import (
 
 // Socket is the socket object of socket.io.
 type Socket interface {
-
 	// Id returns the session id of socket.
 	Id() string
 
 	// Rooms returns the rooms name joined now.
 	Rooms() []string
+
+	AllRooms() []string
+
+	Sockets(room string) []string
 
 	// Request returns the first http request when established connection.
 	Request() *http.Request
@@ -56,6 +59,16 @@ func newSocket(conn engineio.Conn, base *baseHandler) *socket {
 
 func (s *socket) Id() string {
 	return s.conn.Id()
+}
+
+func (s *socket) AllRooms() []string {
+	rooms, _ := s.broadcast.Rooms()
+	return rooms
+}
+
+func (s *socket) Sockets(room string) []string {
+	sockets, _ := s.broadcast.Sockets(room)
+	return sockets
 }
 
 func (s *socket) Request() *http.Request {
